@@ -44,15 +44,20 @@ namespace Proyecto_DH.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Persona personaActualizada)
         {
-            if (id != personaActualizada.PersonaID) return BadRequest("El ID no coincide.");
+            if (personaActualizada == null || id != personaActualizada.PersonaID)
+            {
+                return BadRequest("El ID de la persona no coincide.");
+            }
 
-            var persona = await _personasService.GetByIdAsync(id);
-            if (persona == null) return NotFound("Persona no encontrada.");
+            var existingPersona = await _personasService.GetByIdAsync(id);
+            if (existingPersona == null)
+            {
+                return NotFound();
+            }
 
             await _personasService.UpdateAsync(personaActualizada);
-            return NoContent();
+            return NoContent(); // Retorna un 204 si la actualización es exitosa
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

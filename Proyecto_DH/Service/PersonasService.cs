@@ -31,8 +31,18 @@ namespace Proyecto_DH.Service
 
         public async Task UpdateAsync(Persona persona)
         {
-            _context.Personas.Update(persona);
-            await _context.SaveChangesAsync();
+            var existingPersona = await _context.Personas.FindAsync(persona.PersonaID);
+            if (existingPersona != null)
+            {
+                // Actualizar solo las propiedades necesarias
+                existingPersona.NombreCompleto = persona.NombreCompleto;
+                existingPersona.FechaNacimiento = persona.FechaNacimiento;
+                existingPersona.CorreoElectronico = persona.CorreoElectronico;
+                existingPersona.Telefono = persona.Telefono;
+
+                // Guardar cambios sin agregar una nueva instancia
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteAsync(int id)

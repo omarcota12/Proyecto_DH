@@ -35,8 +35,18 @@ namespace Proyecto_DH.Service
 
         public async Task UpdateAsync(Caso caso)
         {
-            _context.Casos.Update(caso);
-            await _context.SaveChangesAsync();
+            var existingCaso = await _context.Casos.FindAsync(caso.CasoID);
+            if (existingCaso != null)
+            {
+                // Actualizar solo las propiedades necesarias
+                existingCaso.Titulo = caso.Titulo;
+                existingCaso.Descripcion = caso.Descripcion;
+                existingCaso.FechaInicio = caso.FechaInicio;
+                existingCaso.Estado = caso.Estado;
+
+                // Guardar cambios sin agregar una nueva instancia
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteAsync(int id)

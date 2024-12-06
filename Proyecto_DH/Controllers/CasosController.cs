@@ -44,13 +44,19 @@ namespace Proyecto_DH.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Caso casoActualizado)
         {
-            if (id != casoActualizado.CasoID) return BadRequest("El ID no coincide.");
-            var caso = await _casosService.GetByIdAsync(id);
+            if (casoActualizado == null || id != casoActualizado.CasoID)
+            {
+                return BadRequest("El ID del caso no coincide.");
+            }
 
-            if (caso == null) return NotFound("Caso no encontrado.");
+            var existingCaso = await _casosService.GetByIdAsync(id);
+            if (existingCaso == null)
+            {
+                return NotFound();
+            }
 
             await _casosService.UpdateAsync(casoActualizado);
-            return NoContent();
+            return NoContent(); // Retorna un 204 si la actualización es exitosa
         }
 
         [HttpDelete("{id}")]
